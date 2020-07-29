@@ -400,6 +400,34 @@ class SessionConfigTest extends TestCase
         $this->config->setCookieDomain('D:\\WINDOWS\\System32\\drivers\\etc\\hosts');
     }
 
+    // session.cookie_samesite
+
+    /**
+     * @requires PHP 7.3
+     */
+    public function testCookieSameSiteDefaultsToIniSettings()
+    {
+        $this->assertSame(ini_get('session.cookie_samesite'), $this->config->getCookieSameSite());
+    }
+
+    /**
+     * @requires PHP 7.3
+     */
+    public function testCookieSameSiteIsMutable()
+    {
+        $this->config->setCookieSameSite('Strict');
+        $this->assertEquals('Strict', $this->config->getCookieSameSite());
+    }
+
+    /**
+     * @requires PHP 7.3
+     */
+    public function testCookieSameSiteAltersIniSetting()
+    {
+        $this->config->setCookieSameSite('Strict');
+        $this->assertEquals('Strict', ini_get('session.cookie_samesite'));
+    }
+
     // session.cookie_secure
 
     public function testCookieSecureDefaultsToIniSettings()
@@ -1182,6 +1210,15 @@ class SessionConfigTest extends TestCase
                 5,
             ];
         }
+
+        // New options as of PHP 7.3.0
+        if (PHP_VERSION_ID >= 70300) {
+            $commonOptions[] = [
+                'cookie_samesite',
+                'getCookieSameSite',
+                'Lax',
+            ];
+        };
 
         return $commonOptions;
     }
